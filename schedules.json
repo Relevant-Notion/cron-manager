@@ -1,0 +1,23 @@
+[
+  {
+    "name": "periodic-sync",
+    "app_name": "hostbridge-api",
+    "schedule": "0 * * * *",
+    "region": "iad",
+    "command": "/bin/sh -c 'curl -X POST -H \"Authorization: Bearer $CRON_SECRET\" -H \"Content-Type: application/json\" https://api.hostbridge.ai/api/admin/cron/periodic-sync'",
+    "command_timeout": 300,
+    "enabled": true,
+    "config": {
+      "auto_destroy": true,
+      "image": "curlimages/curl:latest",
+      "guest": {
+        "cpu_kind": "shared",
+        "cpus": 1,
+        "memory_mb": 256
+      },
+      "restart": {
+        "policy": "no"
+      }
+    }
+  }
+]
