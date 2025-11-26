@@ -53,9 +53,11 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
-      - uses: dominikh/staticcheck-action@v1.2.0
-        with:
-          install-go: false
+      - name: Install staticcheck
+        run: go install honnef.co/go/tools/cmd/staticcheck@latest
+
+      - name: Run staticcheck
+        run: staticcheck ./...
 
   errcheck:
     name: "Errcheck"
