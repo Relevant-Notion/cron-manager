@@ -12,35 +12,35 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    
+
     steps:
       - name: Checkout fork
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      
+
       - name: Add upstream remote
         run: |
           git remote add upstream https://github.com/fly-apps/cron-manager.git || true
           git fetch upstream
-      
+
       - name: Check if merge is needed
         id: check
         run: |
           git fetch upstream main || git fetch upstream master
           UPSTREAM_BRANCH=$(git ls-remote --heads upstream | grep -E '(main|master)' | head -1 | cut -f2 | sed 's|refs/heads/||')
           echo "upstream_branch=$UPSTREAM_BRANCH" >> $GITHUB_OUTPUT
-          
+
           # Check if there are new commits
           git fetch upstream $UPSTREAM_BRANCH
           LOCAL=$(git rev-parse HEAD)
           REMOTE=$(git rev-parse upstream/$UPSTREAM_BRANCH)
-          
+
           if [ "$LOCAL" = "$REMOTE" ]; then
             echo "needs_update=false" >> $GITHUB_OUTPUT
             echo "No updates available from upstream"
@@ -48,7 +48,7 @@ jobs:
             echo "needs_update=true" >> $GITHUB_OUTPUT
             echo "Updates available from upstream"
           fi
-      
+
       - name: Merge upstream changes
         if: steps.check.outputs.needs_update == 'true'
         run: |
@@ -58,12 +58,12 @@ jobs:
             echo "Merge conflict detected. Manual intervention may be required."
             exit 1
           }
-      
+
       - name: Push changes
         if: steps.check.outputs.needs_update == 'true'
         run: |
           git push origin main
-      
+
       - name: Create Pull Request if merge conflict
         if: failure()
         uses: actions/github-script@v7
@@ -76,4 +76,3 @@ jobs:
               body: 'The automated upstream sync encountered a merge conflict. Please resolve manually.',
               labels: ['upstream-sync', 'needs-attention']
             });
-

@@ -9,12 +9,14 @@ Uses [fly-apps/cron-manager](https://github.com/fly-apps/cron-manager) (via our 
 ## Setup
 
 1. **Create the app** (first time only):
+
    ```bash
    cd cron-manager
    fly apps create hostbridge-cron-manager
    ```
 
 2. **Set secrets**:
+
    ```bash
    # Generate a secure secret for CRON_SECRET (use the same value in hostbridge-api)
    fly secrets set CRON_SECRET=<your-secure-secret> --app hostbridge-cron-manager
@@ -24,6 +26,7 @@ Uses [fly-apps/cron-manager](https://github.com/fly-apps/cron-manager) (via our 
    ```
 
 3. **Set CRON_SECRET on the API** (must match):
+
    ```bash
    fly secrets set CRON_SECRET=<your-secure-secret> --app hostbridge-api
    ```
@@ -37,8 +40,8 @@ Uses [fly-apps/cron-manager](https://github.com/fly-apps/cron-manager) (via our 
 
 Defined in `schedules.json`:
 
-| Name | Schedule | Description |
-|------|----------|-------------|
+| Name            | Schedule             | Description                                          |
+| --------------- | -------------------- | ---------------------------------------------------- |
 | `periodic-sync` | `0 * * * *` (hourly) | Triggers periodic sync check for all connected users |
 
 ## How It Works
@@ -53,11 +56,13 @@ Defined in `schedules.json`:
 ## Monitoring
 
 View cron-manager logs:
+
 ```bash
 fly logs --app hostbridge-cron-manager
 ```
 
 View API logs for sync activity:
+
 ```bash
 fly logs --app hostbridge-api | grep -E "\[Cron\]|\[Sync\]"
 ```
@@ -65,6 +70,7 @@ fly logs --app hostbridge-api | grep -E "\[Cron\]|\[Sync\]"
 ## Testing
 
 Manually trigger a sync check:
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer $CRON_SECRET" \
